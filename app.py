@@ -18,8 +18,14 @@ mois = st.selectbox("🗓️ Mois", list(range(1, 13)), format_func=lambda x: ["
 station_id = le.transform([nom_station])[0]
 X_input = pd.DataFrame([[heure, jour_semaine, mois, station_id]], columns=["heure", "jour_semaine", "mois", "station_id"])
 
-prediction = model.predict(X_input)[0]
+# Obtenir la probabilité que la station soit vide (classe 1)
 proba = model.predict_proba(X_input)[0][1]
+
+# Définir un seuil personnalisé (ex : 0.4)
+seuil = 0.4
+
+# Appliquer le seuil
+prediction = 1 if proba >= seuil else 0
 
 st.markdown("### Résultat de la prédiction :")
 if prediction == 1:
@@ -28,3 +34,4 @@ else:
     st.success(f"✅ La station **{nom_station}** **ne sera pas vide** à {heure}h.")
 
 st.markdown(f"**Probabilité que la station soit vide** : {proba:.2%}")
+st.markdown(f"**Seuil utilisé pour la classification** : {seuil}")
